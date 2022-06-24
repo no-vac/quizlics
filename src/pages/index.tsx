@@ -1,26 +1,34 @@
 import type { NextPage } from "next";
-import React from "react";
-import { MouseEventHandler } from "react";
+import Router, {useRouter} from "next/router";
+import React, { useState, MouseEventHandler } from "react";
 import { SpotifyAPI } from "../spotify";
 import { useStore } from "../store";
 
 const Home: NextPage = () => {
-  const userToken = useStore((state) => state.userToken);
+  const userName = useStore((state) => state.userName);
+  const setUserName = useStore((state) => state.setUserName);
+  
+  // const [userInfo, setUserInfo] = useState("");
+  const router = useRouter();
+  React.useEffect(()=>{
+    if(router.isReady){
 
+      SpotifyAPI.getCurrentUser().then((data) => {
+        setUserName(data.display_name);
+        console.log("user info", data);
+      });
+    }
+  },[router.isReady])
   const handleRequestAccessToken: MouseEventHandler = () => {
     console.log("requesting access token");
-    SpotifyAPI.requestUserAuth();
-  };
-
-  const handleGetUserInfo: MouseEventHandler = () => {
-    console.log("getting user info");
-    SpotifyAPI.getCurrentUser();
+    const url: string = SpotifyAPI.generateUserAuthURL();
+    Router.push(url);
   };
 
   return (
     <>
       <div className="text-3xl font-bold">Hello World</div>
-      {!userToken ? (
+      {!userName ? (
         <input
           type="button"
           onClick={handleRequestAccessToken}
@@ -28,14 +36,8 @@ const Home: NextPage = () => {
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
         />
       ) : (
-        <input
-          type="button"
-          onClick={handleGetUserInfo}
-          value="Get User Info"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-        />
+        <h1>Hello, {userName}</h1>
       )}
-      <h1>{userToken}</h1>
     </>
   );
 };

@@ -13,15 +13,14 @@ interface RequestOptions {
   body?: string;
 }
 
-async function sendRequest({
-  baseURL,
-  endpoint,
-  method,
-  headers,
-  body,
-}: RequestOptions) {
+/**
+ * 
+ * @param options json object with request options (endpoint, baseURL, method, headers, and body)
+ * @returns Promise with json object of the response
+ */
+async function sendRequest(options: RequestOptions): Promise<any> {
+  let { baseURL, endpoint, method, headers, body } = options;
   const userToken = useStore.getState().userToken;
-  // console.log('token', userToken);
 
   //setting defaults
   baseURL = baseURL ? baseURL : "https://api.spotify.com/v1";
@@ -42,11 +41,19 @@ async function sendRequest({
 }
 
 export const SpotifyAPI = {
-  getCurrentUser: () => {
-    sendRequest({ endpoint: "/me" });
+  /**
+   * Get current Spotify user info
+   * @returns Promise with json object with user info
+   */
+  getCurrentUser: async () => {
+    const data = await sendRequest({ endpoint: "/me" });
+    return data;
   },
-  requestUserAuth: () => {
-    // const clientSecret = process.env.SPOTIFY_TOKEN;
+
+  /**
+   * generate user authentication request link to get code used to get token and refresh token
+   */
+  generateUserAuthURL: ():string => {
     const authorizeUrl = "https://accounts.spotify.com/authorize";
     let url = authorizeUrl;
     url += `?client_id=${client_id}`;
@@ -54,8 +61,14 @@ export const SpotifyAPI = {
     url += `&redirect_uri=${encodeURI(redirect_uri)}`;
     url += `&show_dialog=true`;
     url += `&scope=user-top-read user-read-private playlist-read-private user-read-email user-library-read playlist-read-collaborative`;
-    Router.push(url);
+    return url;
   },
+
+  /**
+   * Request user auth token and refresh token
+   * @param code code recieved from user authentication callback
+   * @returns json with auth token and refresh token
+   */
   requestAccessToken: async (code: string) => {
     const options: RequestOptions = {
       baseURL: "https://accounts.spotify.com",
