@@ -1,4 +1,5 @@
 import create from "zustand";
+import {persist} from "zustand/middleware";
 interface UserState {
     userName: string;
     userToken: string;
@@ -8,7 +9,7 @@ interface UserState {
     setUserRefreshToken:(token:string)=>void;
 }
 
-export const useStore = create<UserState>((set)=>({
+export const useStore = create(persist<UserState>((set)=>({
     userName:"",
     userToken:"",
     userRefreshToken:"",
@@ -28,4 +29,4 @@ export const useStore = create<UserState>((set)=>({
         }))
     },
 
-}))
+}),{name:'userState-storage'}));
