@@ -85,4 +85,9 @@ export const SpotifyAPI = {
     const data = await sendRequest(options);
     return { token: data.access_token, refreshToken: data.refresh_token };
   },
+  getCurrentUserPlaylists: async () =>{
+    const data = await sendRequest({ endpoint: "/me/playlists" });
+    console.log('data',data);
+    return data;
+  }
 };
