@@ -9,6 +9,7 @@ const Auth: NextPage = () => {
   const router = useRouter();
   const setUserToken = useStore((state) => state.setUserToken);
   const setUserRefreshToken = useStore((state) => state.setUserRefreshToken);
+  const setSBAuthenticated = useStore((state) => state.setSBAuthenticated);
   React.useEffect(() => {
     if (router.isReady) {
       // Code using query
@@ -22,7 +23,7 @@ const Auth: NextPage = () => {
 
         setUserRefreshToken(refreshToken);
         setCookies("quizlics_SP_RefreshToken", refreshToken);
-
+        setSBAuthenticated(true);
         Router.push("/");
       });
     }

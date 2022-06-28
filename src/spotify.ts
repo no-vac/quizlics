@@ -1,5 +1,4 @@
 import { useStore } from "./store";
-import Router from "next/router";
 
 const redirect_uri: string = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECTURI || "";
 const client_id: string = process.env.NEXT_PUBLIC_SPOTIFY_CLIENTID || "";
@@ -11,6 +10,11 @@ interface RequestOptions {
   method?: string;
   headers?: HeadersInit;
   body?: string;
+}
+
+interface UserToken {
+  token:string;
+  refreshToken:string;
 }
 
 /**
@@ -37,6 +41,18 @@ async function sendRequest(options: RequestOptions): Promise<any> {
         },
   });
   const data: any = await response.json();
+  
+  //handle http error response
+  if(!response.ok){
+
+    //token invalid or expired
+    if(response.status==400){
+      useStore.setState({sbAuthenticated:false});
+    }
+
+    const error = (data && data?.message) || response.status;
+    return Promise.reject(error);
+  }
   return data;
 }
 
@@ -46,7 +62,9 @@ export const SpotifyAPI = {
    * @returns Promise with json object with user info
    */
   getCurrentUser: async () => {
-    const data = await sendRequest({ endpoint: "/me" });
+    const data = await sendRequest({ endpoint: "/me" }).catch(error=>{
+      return Promise.reject(error);
+    });
     return data;
   },
 
@@ -64,12 +82,13 @@ export const SpotifyAPI = {
     return url;
   },
 
+
   /**
    * Request user auth token and refresh token
    * @param code code recieved from user authentication callback
    * @returns json with auth token and refresh token
    */
-  requestAccessToken: async (code: string) => {
+  requestAccessToken: async (code: string):Promise<UserToken> => {
     const options: RequestOptions = {
       baseURL: "https://accounts.spotify.com",
       endpoint: "/api/token",
@@ -85,6 +104,13 @@ export const SpotifyAPI = {
     const data = await sendRequest(options);
     return { token: data.access_token, refreshToken: data.refresh_token };
   },
+
+  /**
+   * Get Current User's playlists
+   * @returns json data with user playlists
+   */
+  //TODO: create return type for user playlists
+  //TODO: figure out pagination
   getCurrentUserPlaylists: async () =>{
     const data = await sendRequest({ endpoint: "/me/playlists" });
     console.log('data',data);
