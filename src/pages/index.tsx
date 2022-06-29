@@ -3,7 +3,8 @@ import Router, { useRouter } from "next/router";
 import React, { useState, MouseEventHandler, SetStateAction } from "react";
 import { SpotifyAPI } from "../spotify";
 import { useStore } from "../store";
-import PlaylistList from "../../components/PlaylistList";
+import PlaylistList from "../components/PlaylistList";
+import { Playlist, PlayLists } from "../spotify.types";
 
 const useHasHydrated = () => {
   const [hasHydrated, setHasHydrated] = useState<boolean>(false);
@@ -21,15 +22,15 @@ const Home: NextPage = () => {
   const userName = useStore((state) => state.userName);
   const sbAuthed = useStore((state) => state.sbAuthenticated);
 
-  const [playlists, setPlaylists] = useState<Array<String>>([]);
+  const [playlists, setPlaylists] = useState<Array<Playlist>>([]);
+
   const router = useRouter();
   React.useEffect(() => {
     if (router.isReady) {
       SpotifyAPI.getCurrentUser().then((data) => {
         setUserName(data.display_name);
-        SpotifyAPI.getCurrentUserPlaylists().then((data) => {
-          const _playlists = data.items.map((pl: any) => pl.name);
-          setPlaylists(() => [..._playlists]);
+        SpotifyAPI.getCurrentUserPlaylists().then((playlists: PlayLists) => {
+          setPlaylists(() => [...playlists.items]);
         });
       });
     }
@@ -66,15 +67,14 @@ const Home: NextPage = () => {
           notAuthorized
         ) : (
           <>
-          <div className="flex font-bold text-3xl justify-center mb-5">
-            <div className="flex flex-col text-center">
-
-            <h1>Hello {userName}</h1>
-            <h2>Choose your playlist</h2>
+            <div className="flex font-bold text-3xl justify-center mb-5">
+              <div className="flex flex-col text-center">
+                <h1>Hello {userName}</h1>
+                <h2>Choose your playlist</h2>
+              </div>
             </div>
-          </div>
             <div className="flex justify-center">
-            <PlaylistList playlists={playlists} />
+              <PlaylistList playlists={playlists} />
             </div>
           </>
         ))}
