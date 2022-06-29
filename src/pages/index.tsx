@@ -44,12 +44,6 @@ const Home: NextPage = () => {
 
   const notAuthorized = (
     <>
-      <img
-        src="/quizlics-logos_black.png"
-        height={"200em"}
-        width={"200em"}
-        alt=""
-      />
       <div className="text-3xl font-bold text-center">Your Lyrics Quiz</div>
       <input
         type="button"
@@ -62,6 +56,14 @@ const Home: NextPage = () => {
 
   return (
     <div className="flex bg-blue-600 content-center justify-center grid grid-flow-row auto-rows-max h-screen">
+      <div className="flex justify-center">
+        <img
+          src="/quizlics_full_transparent_black.png"
+          height={"300em"}
+          width={"300em"}
+          alt=""
+        />
+      </div>
       {hasHydrated &&
         (!sbAuthed ? (
           notAuthorized
