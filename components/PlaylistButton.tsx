@@ -7,7 +7,7 @@ type Props = {
 
 export default function PlaylistButton({playlistName}: Props) {
   return (
-    <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
+    <button className='w-full pt-3 pb-3 bg-[#DFF6FF] hover:bg-[#47B5FF] text-black font-bold py-2 px-4 rounded-full'>
         {playlistName}
     </button>
   )

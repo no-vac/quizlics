@@ -14,6 +14,7 @@ const useHasHydrated = () => {
 
   return hasHydrated;
 };
+
 const Home: NextPage = () => {
   const hasHydrated = useHasHydrated();
   const setUserName = useStore((state) => state.setUserName);
@@ -26,10 +27,10 @@ const Home: NextPage = () => {
     if (router.isReady) {
       SpotifyAPI.getCurrentUser().then((data) => {
         setUserName(data.display_name);
-        SpotifyAPI.getCurrentUserPlaylists().then(data=>{
-          const _playlists = data.items.map((pl:any)=>pl.name);
-          setPlaylists(()=>[..._playlists]);
-        })
+        SpotifyAPI.getCurrentUserPlaylists().then((data) => {
+          const _playlists = data.items.map((pl: any) => pl.name);
+          setPlaylists(() => [..._playlists]);
+        });
       });
     }
   }, [router.isReady]);
@@ -40,22 +41,41 @@ const Home: NextPage = () => {
     Router.push(url);
   };
 
+  const notAuthorized = (
+    <>
+      <img
+        src="/quizlics-logos_black.png"
+        height={"200em"}
+        width={"200em"}
+        alt=""
+      />
+      <div className="text-3xl font-bold text-center">Your Lyrics Quiz</div>
+      <input
+        type="button"
+        onClick={handleRequestAccessToken}
+        value="Log In With Spotify"
+        className="bg-green-500 mt-3 mb-33 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+      />
+    </>
+  );
 
   return (
-    <div>
-      <div className="text-3xl font-bold">Hello World</div>
+    <div className="flex bg-blue-600 content-center justify-center grid grid-flow-row auto-rows-max h-screen">
       {hasHydrated &&
         (!sbAuthed ? (
-          <input
-            type="button"
-            onClick={handleRequestAccessToken}
-            value="Request Authorization"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-          />
+          notAuthorized
         ) : (
           <>
-          <h1>Hello {userName}</h1>
-          <PlaylistList playlists={playlists}/>
+          <div className="flex font-bold text-3xl justify-center mb-5">
+            <div className="flex flex-col text-center">
+
+            <h1>Hello {userName}</h1>
+            <h2>Choose your playlist</h2>
+            </div>
+          </div>
+            <div className="flex justify-center">
+            <PlaylistList playlists={playlists} />
+            </div>
           </>
         ))}
     </div>

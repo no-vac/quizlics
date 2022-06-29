@@ -9,7 +9,7 @@ export default function PlaylistList({playlists}: Props) {
   return (
     <div
     // style={{backgroundColor:'red'}}
-    className='grid grid-rows-4 grid-flow-col gap-4'
+    className='grid grid-cols-3 grid-flow-row gap-4'
     >
         {playlists.map((pl:String)=>{
           return <div key={pl.toString()}>
