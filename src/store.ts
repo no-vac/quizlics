@@ -1,15 +1,7 @@
 import create from "zustand";
-import {persist} from "zustand/middleware";
-interface UserState {
-    sbAuthenticated:boolean;
-    userName: string;
-    userToken: string;
-    userRefreshToken:string;
-    setSBAuthenticated: (sbAuthenticated:boolean)=>void;
-    setUserName: (name:string)=>void;
-    setUserToken:(token:string)=>void;
-    setUserRefreshToken:(token:string)=>void;
-}
+import { persist } from "zustand/middleware";
+import { UserState } from "./store.types";
+
 
 export const useStore = create(persist<UserState>((set)=>({
     sbAuthenticated:false,
@@ -37,4 +29,4 @@ export const useStore = create(persist<UserState>((set)=>({
         }))
     },
 
-}),{name:'userState-storage'}));
+}),{name:'quizlics-store'}));

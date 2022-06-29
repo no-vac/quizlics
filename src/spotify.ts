@@ -7,7 +7,7 @@ const client_secret: string = process.env.NEXT_PUBLIC_SPOTIFY_SECRET || "";
 
 
 /**
- * 
+ * send request to spotify API
  * @param options json object with request options (endpoint, baseURL, method, headers, and body)
  * @returns Promise with json object of the response
  */
@@ -98,7 +98,6 @@ export const SpotifyAPI = {
    * Get Current User's playlists
    * @returns json data with user playlists
    */
-  //TODO: create return type for user playlists
   //TODO: figure out pagination
   getCurrentUserPlaylists: async () =>{
     const data = await sendRequest({ endpoint: "/me/playlists" });

@@ -36,12 +36,18 @@ const Home: NextPage = () => {
     }
   }, [router.isReady]);
 
+  /**
+   * event handler to generate and redirect to authenticate with Spotify
+   */
   const handleRequestAccessToken: MouseEventHandler = () => {
     console.log("requesting access token");
     const url: string = SpotifyAPI.generateUserAuthURL();
     Router.push(url);
   };
 
+  /**
+   * Element shown if user is not signed in with Spotify
+   */
   const notAuthorized = (
     <>
       <div className="text-3xl font-bold text-center">Your Lyrics Quiz</div>
