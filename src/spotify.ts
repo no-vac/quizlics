@@ -1,21 +1,10 @@
 import { useStore } from "./store";
+import { RequestOptions, UserToken, PlayLists, Playlist } from "./spotify.types";
 
 const redirect_uri: string = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECTURI || "";
 const client_id: string = process.env.NEXT_PUBLIC_SPOTIFY_CLIENTID || "";
 const client_secret: string = process.env.NEXT_PUBLIC_SPOTIFY_SECRET || "";
 
-interface RequestOptions {
-  endpoint: string;
-  baseURL?: string;
-  method?: string;
-  headers?: HeadersInit;
-  body?: string;
-}
-
-interface UserToken {
-  token:string;
-  refreshToken:string;
-}
 
 /**
  * 
@@ -113,7 +102,11 @@ export const SpotifyAPI = {
   //TODO: figure out pagination
   getCurrentUserPlaylists: async () =>{
     const data = await sendRequest({ endpoint: "/me/playlists" });
-    console.log('data',data);
-    return data;
+    const playlists:PlayLists = {items:[], offset:data.offset,limit:data.limit, previous:data.previous};
+    data.items.map((pl:any)=>{
+      const playlist:Playlist = {name:pl.name, id:pl.id}
+      playlists.items.push(playlist);
+    })
+    return playlists;
   }
 };

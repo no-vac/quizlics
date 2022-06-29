@@ -1,19 +1,5 @@
+import { RequestOptions } from "./musixmatch.types";
 const apikey: string = process.env.NEXT_PUBLIC_MUSIX_KEY || "";
-
-interface RequestOptions {
-  endpoint: string;
-  query?: QueryOptions;
-  baseURL?: string;
-  method?: string;
-  headers?: HeadersInit;
-  body?: string;
-}
-
-interface QueryOptions {
-  q_track?: string;
-  q_artist?: string;
-  apikey?:string;
-}
 
 /**
  * send request to MUSIX api
