@@ -19,7 +19,7 @@ async function sendRequest(options: RequestOptions): Promise<any> {
   baseURL = baseURL ? baseURL : "https://api.spotify.com/v1";
   method = method ? method : "GET";
 
-  const response: Response = await fetch(baseURL + endpoint, {
+  const fetchoptions = {
     method,
     body,
     headers: headers
@@ -28,15 +28,25 @@ async function sendRequest(options: RequestOptions): Promise<any> {
           "Content-Type": "application/json",
           Authorization: "Bearer " + userToken,
         },
-  });
-  const data: any = await response.json();
+  }
+  const response: Response = await fetch(baseURL + endpoint, fetchoptions );
+  let data: any = await response.json();
   
   //handle http error response
   if(!response.ok){
-
-    //token invalid or expired
+    //token invalid
     if(response.status==400){
       useStore.setState({sbAuthenticated:false});
+    }
+    //token expired
+    if(response.status==401){
+      //refresh token
+      const token = SpotifyAPI.requestNewAccessToken();
+      useStore.setState({userToken:token.toString()});
+
+      const response: Response = await fetch(baseURL + endpoint, fetchoptions );
+       data = await response.json();
+
     }
 
     const error = (data && data?.message) || response.status;
@@ -67,7 +77,7 @@ export const SpotifyAPI = {
     url += `&response_type=code`;
     url += `&redirect_uri=${encodeURI(redirect_uri)}`;
     url += `&show_dialog=true`;
-    url += `&scope=user-top-read user-read-private playlist-read-private user-read-email user-library-read playlist-read-collaborative`;
+    url += `&scope=user-top-read user-read-private playlist-read-private user-library-read playlist-read-collaborative`;
     return url;
   },
 
@@ -92,6 +102,24 @@ export const SpotifyAPI = {
     };
     const data = await sendRequest(options);
     return { token: data.access_token, refreshToken: data.refresh_token };
+  },
+
+  requestNewAccessToken: async ():Promise<string>=>{
+    const refresh_token = useStore.getState().userRefreshToken;
+    const options: RequestOptions = {
+      baseURL: "https://accounts.spotify.com",
+      endpoint: "/api/refresh_token",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization:
+          "Basic " +
+          new Buffer(client_id + ":" + client_secret).toString("base64"),
+      },
+      body: `grant_type=refresh_token&refresh_token=${refresh_token}`,
+    };
+    const data = await sendRequest(options);
+    return data.access_token;
   },
 
   /**

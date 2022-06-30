@@ -32,5 +32,5 @@ export interface UserToken {
   /** spotify user access token */
   token: string;
   /** spotify user refresh token */
-  refreshToken: string;
+  refreshToken?: string;
 }

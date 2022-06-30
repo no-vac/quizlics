@@ -31,8 +31,8 @@ const Home: NextPage = () => {
         setUserName(data.display_name);
         SpotifyAPI.getCurrentUserPlaylists().then((playlists: PlayLists) => {
           setPlaylists(() => [...playlists.items]);
-        });
-      });
+        }).catch(err=>console.log(err));
+      }).catch(err=>console.log(err));
     }
   }, [router.isReady]);
 
