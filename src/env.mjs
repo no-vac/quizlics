@@ -9,6 +9,12 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     NODE_ENV: z.enum(["development", "test", "production"]),
+    DATABASE_PRISMA_URL: z.string(),
+    DATABASE_URL_NON_POOLING: z.string(),
+    DATABASE_USER: z.string(),
+    DATABASE_HOST: z.string(),
+    DATABASE_PASSWORD: z.string(),
+    DATABASE_DATABASE: z.string(),
   },
 
   /**
@@ -26,6 +32,12 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_PRISMA_URL: process.env.DATABASE_PRISMA_URL,
+    DATABASE_URL_NON_POOLING: process.env.DATABASE_URL_NON_POOLING,
+    DATABASE_USER: process.env.DATABASE_USER,
+    DATABASE_HOST: process.env.DATABASE_HOST,
+    DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
+    DATABASE_DATABASE: process.env.DATABASE_DATABASE,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
