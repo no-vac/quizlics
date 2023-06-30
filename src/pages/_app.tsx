@@ -5,6 +5,7 @@ import "~/styles/globals.css";
 
 const MyApp: AppType = ({
   Component,
+  //@ts-ignore
   pageProps: { session, ...pageProps },
 }) => {
   return (
